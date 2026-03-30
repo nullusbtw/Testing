@@ -1,0 +1,240 @@
+:root{
+  --bg: #f4f7ff;
+  --bg2:#eef9ff;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#e2e8f0;
+  --card:#ffffff;
+  --card2:#f8fafc;
+  --primary:#2563eb;
+  --primary2:#1d4ed8;
+  --danger:#dc2626;
+  --danger2:#b91c1c;
+  --shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+}
+
+html, body {
+  height: 100%;
+}
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+}
+
+a{
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+a:hover{
+  color: var(--primary2);
+  text-decoration: underline;
+}
+
+.app-shell{
+  padding: 24px 24px 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-header{
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  backdrop-filter: blur(6px);
+}
+
+.app-title{
+  margin:0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.app-nav{
+  display:flex;
+  gap:12px;
+}
+
+.nav-link{
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+.nav-link:hover{
+  background: var(--card2);
+  border-color: var(--border);
+  text-decoration: none;
+}
+
+.page{
+  margin-top: 14px;
+}
+
+.page-header{
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.06);
+  backdrop-filter: blur(6px);
+}
+
+.page-title{
+  margin: 0 0 12px;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+/* Buttons (works on both <button> and links with className) */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover{
+  background: var(--card2);
+}
+
+.btn-primary{
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.btn-primary:disabled{
+  background: var(--primary);
+  border-color: var(--primary);
+  opacity: 0.5;
+}
+.btn-primary:disabled:hover{
+  background: var(--primary);
+  border-color: var(--primary);
+  opacity: 0.5;
+}
+
+.btn-secondary{
+  background: rgba(255,255,255,0.85);
+}
+
+.btn-danger{
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover{
+  background: var(--danger2);
+  border-color: var(--danger2);
+  color: #fff;
+}
+
+.btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn:disabled:hover{
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.recipe-table{
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.06);
+}
+
+.recipe-table thead th{
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 800;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-table tbody td{
+  padding: 10px 14px;
+  border-bottom: 1px solid #eef2ff;
+  vertical-align: top;
+}
+
+.recipe-table tbody tr:nth-child(even) td{
+  background: #fcfdff;
+}
+
+.recipe-table tbody tr:hover td{
+  background: #f3f7ff;
+}
+
+/* Forms + filters */
+input:not([type="checkbox"]),
+select,
+textarea{
+  width: 100%;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  box-sizing: border-box;
+}
+
+input:not([type="checkbox"]):focus,
+select:focus,
+textarea:focus{
+  border-color: rgba(37, 99, 235, 0.7);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+}
+
+/* In many places inline styles set widths; this keeps the rest nice. */
+input, select, textarea{
+  box-sizing: border-box;
+}
+
+label{
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+label input[type="checkbox"]{
+  transform: translateY(1px);
+}
+
+table button{
+  white-space: nowrap;
+}
+
+img{
+  border-radius: 14px;
+  border: 1px solid rgba(2, 6, 23, 0.06);
+}
+

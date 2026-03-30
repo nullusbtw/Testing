@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum ProductCategory {
+  Frozen
+  Meat
+  Vegetables
+  Greens
+  Spices
+  Grains
+  Canned
+  Liquid
+  Sweets
+}
+
+enum CookingNeed {
+  Ready
+  SemiReady
+  RequiresCooking
+}
+
+enum DishCategory {
+  Dessert
+  First
+  Second
+  Drink
+  Salad
+  Soup
+  Snack
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+
+  name String
+  photos Json @default("[]")
+
+  caloriesPer100 Float
+  proteinsPer100 Float
+  fatsPer100 Float
+  carbsPer100 Float
+
+  composition String?
+
+  category ProductCategory
+  cookingNeed CookingNeed
+
+  vegan Boolean @default(false)
+  glutenFree Boolean @default(false)
+  sugarFree Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+
+  dishProducts DishProduct[]
+
+  @@index([name])
+}
+
+model Dish {
+  id Int @id @default(autoincrement())
+
+  name String
+  photos Json @default("[]")
+
+  calories Float
+  proteins Float
+  fats Float
+  carbs Float
+
+  size Float
+
+  category DishCategory
+
+  vegan Boolean @default(false)
+  glutenFree Boolean @default(false)
+  sugarFree Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+
+  dishProducts DishProduct[]
+
+  @@index([name])
+}
+
+model DishProduct {
+  dishId Int
+  productId Int
+  quantity Float
+
+  dish Dish @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@id([dishId, productId])
+  @@index([productId])
+}
