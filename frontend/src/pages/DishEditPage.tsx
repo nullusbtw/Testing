@@ -64,34 +64,6 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
   const [glutenFree, setGlutenFree] = useState(false);
   const [sugarFree, setSugarFree] = useState(false);
 
-  const selectedProducts = useMemo(() => {
-    const ps = items
-      .map((it) => productById.get(it.productId))
-      .filter((x): x is Product => Boolean(x));
-    return ps;
-  }, [items, productById]);
-
-  const hasSelection = selectedProducts.length > 0;
-  const allowedVegan = hasSelection && selectedProducts.every((p) => p.vegan);
-  const allowedGlutenFree = hasSelection && selectedProducts.every((p) => p.glutenFree);
-  const allowedSugarFree = hasSelection && selectedProducts.every((p) => p.sugarFree);
-
-  // UI-логика: если флаг "недоступен" по выбранному составу — запрещаем его включать
-  // и автоматически сбрасываем, чтобы пользователь не удивлялся после "Создать/Сохранить".
-  useEffect(() => {
-    if (!hasSelection) {
-      if (vegan) setVegan(false);
-      if (glutenFree) setGlutenFree(false);
-      if (sugarFree) setSugarFree(false);
-      return;
-    }
-
-    if (vegan && !allowedVegan) setVegan(false);
-    if (glutenFree && !allowedGlutenFree) setGlutenFree(false);
-    if (sugarFree && !allowedSugarFree) setSugarFree(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasSelection, allowedVegan, allowedGlutenFree, allowedSugarFree]);
-
   // КБЖУ в форме (сервер пересчитает и перезапишет при сохранении)
   const [calories, setCalories] = useState(0);
   const [proteins, setProteins] = useState(0);
@@ -114,6 +86,27 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
   }, []);
 
   const derived = useMemo(() => parseFirstMacroFromName(name), [name]);
+
+  // Вычисляем доступные флаги (которые есть у ВСЕх продуктов)
+  const allowedFlags = useMemo(() => {
+    if (items.length === 0) {
+      return { vegan: false, glutenFree: false, sugarFree: false };
+    }
+    const all = items.length > 0;
+    const vegan = all && items.every((it) => {
+      const p = productById.get(it.productId);
+      return p?.vegan ?? false;
+    });
+    const glutenFree = all && items.every((it) => {
+      const p = productById.get(it.productId);
+      return p?.glutenFree ?? false;
+    });
+    const sugarFree = all && items.every((it) => {
+      const p = productById.get(it.productId);
+      return p?.sugarFree ?? false;
+    });
+    return { vegan, glutenFree, sugarFree };
+  }, [items, productById]);
 
   // Локальный пересчёт КБЖУ при изменении состава.
   useEffect(() => {
@@ -145,6 +138,13 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
     setFats(roundTo(f, 2));
     setCarbs(roundTo(u, 2));
   }, [items, productById]);
+
+  // Сбрасываем флаги если они больше не доступны
+  useEffect(() => {
+    if (!allowedFlags.vegan && vegan) setVegan(false);
+    if (!allowedFlags.glutenFree && glutenFree) setGlutenFree(false);
+    if (!allowedFlags.sugarFree && sugarFree) setSugarFree(false);
+  }, [allowedFlags]);
 
   useEffect(() => {
     if (mode !== "edit") return;
@@ -179,10 +179,13 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
 
   const isValid = (() => {
     if (name.trim().length < 2) return false;
+    if (derived.sanitizedName.trim().length < 2) return false;
     if (size <= 0) return false;
     if (items.length < 1) return false;
     const macro = derived.macroCategoryRu;
     if (!categoryTouched && !macro) return false;
+    const sum = proteins + fats + carbs;
+    if (sum > 100) return false;
     return true;
   })();
 
@@ -321,7 +324,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
             ))}
           </div>
           <div>
-            <label style={{ marginLeft: '8px' }}>Загрузить фото (до 5)</label>
+            <label style={{ marginLeft: '8px' }}>Загрузить фото ({photos.length}/5)</label>
             <input
               type="file"
               accept="image/*"
@@ -332,7 +335,10 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
                 if (!files || files.length === 0) return;
 
                 const room = Math.max(0, 5 - photos.length);
-                if (room <= 0) return;
+                if (room <= 0) {
+                  setError("Лимит фото: максимум 5. Сначала удалите лишние фото.");
+                  return;
+                }
 
                 const toDataUrl = (file: File) =>
                   new Promise<string>((resolve, reject) => {
@@ -489,32 +495,23 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
           />
         </div>
 
+        {proteins + fats + carbs > 100 && (
+          <div style={{ gridColumn: "span 12", color: "crimson", fontSize: 14 }}>
+            Сумма БЖУ не может превышать 100г на 100г продукта
+          </div>
+        )}
+
         <div style={{ gridColumn: "span 12", display: "flex", gap: 14 }}>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input
-              type="checkbox"
-              checked={vegan}
-              onChange={(e) => setVegan(e.target.checked)}
-              disabled={hasSelection && !allowedVegan}
-            />
+            <input type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} disabled={!allowedFlags.vegan} />
             Веган
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input
-              type="checkbox"
-              checked={glutenFree}
-              onChange={(e) => setGlutenFree(e.target.checked)}
-              disabled={hasSelection && !allowedGlutenFree}
-            />
+            <input type="checkbox" checked={glutenFree} onChange={(e) => setGlutenFree(e.target.checked)} disabled={!allowedFlags.glutenFree} />
             Без глютена
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input
-              type="checkbox"
-              checked={sugarFree}
-              onChange={(e) => setSugarFree(e.target.checked)}
-              disabled={hasSelection && !allowedSugarFree}
-            />
+            <input type="checkbox" checked={sugarFree} onChange={(e) => setSugarFree(e.target.checked)} disabled={!allowedFlags.sugarFree} />
             Без сахара
           </label>
         </div>

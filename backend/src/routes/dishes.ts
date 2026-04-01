@@ -23,12 +23,7 @@ dishesRouter.get("/", async (req, res, next) => {
     const parsed = DishesQuerySchema.parse(req.query);
 
     const where: any = {};
-    if (parsed.search) {
-      // Для SQLite (и текущей версии Prisma) параметр `mode` в строковых фильтрах `contains`
-      // не поддерживается и приводит к runtime-ошибке 500.
-      // Ожидаем, что поведение `contains` через `LIKE` и так достаточно для case-insensitive поиска.
-      where.name = { contains: parsed.search };
-    }
+    // Не передаём поиск в БД, будем фильтровать на JS стороне
     if (parsed.category) {
       where.category = parseDishCategoryRuToEnum(parsed.category);
     }
@@ -37,7 +32,14 @@ dishesRouter.get("/", async (req, res, next) => {
     if (parsed.glutenFree) where.glutenFree = true;
     if (parsed.sugarFree) where.sugarFree = true;
 
-    const items = await prisma.dish.findMany({ where });
+    let items = await prisma.dish.findMany({ where });
+    
+    // Case-insensitive фильтрация по названию на JS стороне
+    if (parsed.search) {
+      const searchLower = parsed.search.toLowerCase();
+      items = items.filter((d) => d.name.toLowerCase().includes(searchLower));
+    }
+
     res.json({
       items: items.map((d) => ({
         id: d.id,

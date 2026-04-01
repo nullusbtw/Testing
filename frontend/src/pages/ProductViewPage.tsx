@@ -82,9 +82,11 @@ export function ProductViewPage() {
         <div style={{ gridColumn: "span 6" }}>
           <b>Дата создания:</b> {new Date(product.createdAt).toLocaleString()}
         </div>
-        <div style={{ gridColumn: "span 6" }}>
-          <b>Дата редактирования:</b> {product.updatedAt ? new Date(product.updatedAt).toLocaleString() : "—"}
-        </div>
+        {product.updatedAt && product.updatedAt !== product.createdAt && (
+          <div style={{ gridColumn: "span 6" }}>
+            <b>Дата редактирования:</b> {new Date(product.updatedAt).toLocaleString()}
+          </div>
+        )}
       </div>
     </div>
   );

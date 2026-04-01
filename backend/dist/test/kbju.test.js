@@ -4,18 +4,18 @@ const kbju_1 = require("../src/lib/kbju");
 describe("calculateDishKbjuOnPortion", () => {
     let baseProduct;
     beforeEach(() => {
-        // Setup a reusable base product for test parametrization.
+        // Подготавливаем базовый продукт, чтобы переиспользовать в тестах
         baseProduct = { caloriesPer100: 200, proteinsPer100: 20, fatsPer100: 10, carbsPer100: 40 };
     });
     afterEach(() => {
-        // Teardown if needed in future expansions (e.g., restoring mocks).
+        // Очистка окружения перед следующим тестом
         baseProduct = undefined;
     });
-    it("returns zero KBJU for empty dish (эквивалентное разбиение: пустой список)", () => {
+    it("Кейс 1: пустое блюдо -> 0 калорий, 0 белков, 0 жиров, 0 углеводов (эквивалентное разбиение)", () => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({ items: [] });
         expect(result).toEqual({ calories: 0, proteins: 0, fats: 0, carbs: 0 });
     });
-    it("correctly computes KBJU for single 100g product (граничное значение 100 г)", () => {
+    it("Кейс 2: одиночный продукт 100г -> полные значения KBJU (граничное значение)", () => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({ items: [{ product: baseProduct, quantityInGrams: 100 }] });
         expect(result).toEqual({ calories: 200, proteins: 20, fats: 10, carbs: 40 });
     });
@@ -24,14 +24,14 @@ describe("calculateDishKbjuOnPortion", () => {
         { quantity: 1, expectedRatio: 0.01 },
         { quantity: 50, expectedRatio: 0.5 },
         { quantity: 100, expectedRatio: 1 },
-    ])("parametrized boundary test quantity=$quantity g", ({ quantity, expectedRatio }) => {
+    ])("Кейс 3: параметризованное граничное тестирование quantity=$quantity г (0,1,50,100)", ({ quantity, expectedRatio }) => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({ items: [{ product: baseProduct, quantityInGrams: quantity }] });
         expect(result.calories).toBeCloseTo(baseProduct.caloriesPer100 * expectedRatio);
         expect(result.proteins).toBeCloseTo(baseProduct.proteinsPer100 * expectedRatio);
         expect(result.fats).toBeCloseTo(baseProduct.fatsPer100 * expectedRatio);
         expect(result.carbs).toBeCloseTo(baseProduct.carbsPer100 * expectedRatio);
     });
-    it("handles multiple products cumulatively (эквивалентное разбиение: несколько записей)", () => {
+    it("Кейс 4: несколько продуктов в блюде суммируются (эквивалентное разбиение)", () => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({
             items: [
                 { product: baseProduct, quantityInGrams: 150 }, // 1.5 порции
@@ -43,7 +43,7 @@ describe("calculateDishKbjuOnPortion", () => {
         expect(result.fats).toBeCloseTo(10 * 1.5 + 2 * 0.75);
         expect(result.carbs).toBeCloseTo(40 * 1.5 + 10 * 0.75);
     });
-    it("accepts 0 г, 100 г и 1000 г как граничные величины (boundary analysis)", () => {
+    it("Кейс 5: граничные значения 0г, 100г, 1000г (boundary analysis)", () => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({
             items: [
                 { product: baseProduct, quantityInGrams: 0 },
@@ -56,7 +56,7 @@ describe("calculateDishKbjuOnPortion", () => {
         expect(result.fats).toBeCloseTo(10 * (0 + 1 + 10));
         expect(result.carbs).toBeCloseTo(40 * (0 + 1 + 10));
     });
-    it("procedurally documents expected behavior с отрицательным количеством (проверка нестабильного ввода)", () => {
+    it("Кейс 6: отрицательное количество -100г принимает форму отрицательных KBJU (проверка неблагоприятного ввода)", () => {
         const result = (0, kbju_1.calculateDishKbjuOnPortion)({ items: [{ product: baseProduct, quantityInGrams: -100 }] });
         expect(result.calories).toBeCloseTo(-200);
         expect(result.proteins).toBeCloseTo(-20);

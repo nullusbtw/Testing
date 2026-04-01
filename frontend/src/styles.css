@@ -29,10 +29,6 @@ a{
   text-decoration: none;
   font-weight: 600;
 }
-a:hover{
-  color: var(--primary2);
-  text-decoration: underline;
-}
 
 .app-shell{
   padding: 24px 24px 48px;

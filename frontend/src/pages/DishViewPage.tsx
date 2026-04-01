@@ -77,9 +77,11 @@ export function DishViewPage() {
         <div style={{ gridColumn: "span 6" }}>
           <b>Дата создания:</b> {new Date(dish.createdAt).toLocaleString()}
         </div>
-        <div style={{ gridColumn: "span 6" }}>
-          <b>Дата редактирования:</b> {dish.updatedAt ? new Date(dish.updatedAt).toLocaleString() : "—"}
-        </div>
+        {dish.updatedAt && dish.updatedAt !== dish.createdAt && (
+          <div style={{ gridColumn: "span 6" }}>
+            <b>Дата редактирования:</b> {new Date(dish.updatedAt).toLocaleString()}
+          </div>
+        )}
       </div>
 
       <h3 style={{ marginTop: 0 }}>Состав</h3>

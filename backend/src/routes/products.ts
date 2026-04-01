@@ -40,12 +40,7 @@ productsRouter.get("/", async (req, res, next) => {
     const parsed = ProductsQuerySchema.parse(req.query);
 
     const where: any = {};
-    if (parsed.search) {
-      // Для SQLite (и текущей версии Prisma) параметр `mode` в строковых фильтрах `contains`
-      // не поддерживается и приводит к runtime-ошибке 500.
-      // Ожидаем, что поведение `contains` через `LIKE` и так достаточно для case-insensitive поиска.
-      where.name = { contains: parsed.search };
-    }
+    // Не передаём поиск в БД, будем фильтровать на JS стороне
     if (parsed.category) {
       try {
         where.category = parseProductCategoryRuToEnum(parsed.category);
@@ -80,10 +75,16 @@ productsRouter.get("/", async (req, res, next) => {
               ? { fatsPer100: dir }
               : { carbsPer100: dir };
 
-    const items = await prisma.product.findMany({
+    let items = await prisma.product.findMany({
       where,
       orderBy,
     });
+
+    // Case-insensitive фильтрация по названию на JS стороне
+    if (parsed.search) {
+      const searchLower = parsed.search.toLowerCase();
+      items = items.filter((p) => p.name.toLowerCase().includes(searchLower));
+    }
 
     res.json({
       items: items.map((p) => ({
