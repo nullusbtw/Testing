@@ -23,6 +23,17 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     });
   }
 
+  // Handle Prisma errors
+  const prismaError = err as any;
+  if (prismaError?.code === "P2025") {
+    return res.status(404).json({
+      error: {
+        code: "NOT_FOUND",
+        message: "Record not found",
+      },
+    });
+  }
+
   // eslint-disable-next-line no-console
   console.error(err);
   return res.status(500).json({

@@ -58,13 +58,11 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
   const isValid = (() => {
     if (name.trim().length < 2) return false;
     if (caloriesPer100 < 0) return false;
-    if (proteinsPer100 < 0 || proteinsPer100 > 100) return false;
-    if (fatsPer100 < 0 || fatsPer100 > 100) return false;
-    if (carbsPer100 < 0 || carbsPer100 > 100) return false;
+    if (proteinsPer100 < 0) return false;
+    if (fatsPer100 < 0) return false;
+    if (carbsPer100 < 0) return false;
     if (!category) return false;
     if (!cookingNeed) return false;
-    const sum = proteinsPer100 + fatsPer100 + carbsPer100;
-    if (sum > 100) return false;
     return true;
   })();
 
@@ -117,7 +115,7 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
         >
           <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Название</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
           </div>
 
         <div style={{ gridColumn: "span 6" }}>
@@ -253,7 +251,7 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
         </div>
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 12, marginTop: 8 }}>
-          <button className="btn btn-primary" type="submit" disabled={!isValid}>
+          <button className="btn btn-primary" type="submit">
             {mode === "create" ? "Создать" : "Сохранить"}
           </button>
           <button

@@ -102,25 +102,9 @@ const ProductBaseSchema = z.object({
   sugarFree: z.boolean().optional().default(false),
 });
 
-export const ProductCreateSchema = ProductBaseSchema.refine((data) => {
-  const sum = data.proteinsPer100 + data.fatsPer100 + data.carbsPer100;
-  return sum <= 100;
-}, {
-  message: "Сумма белков, жиров и углеводов на 100 грамм не может превышать 100 грамм",
-  path: ["proteinsPer100"],
-});
+export const ProductCreateSchema = ProductBaseSchema;
 
-export const ProductUpdateSchema = ProductBaseSchema.partial().refine((data) => {
-  // Проверяем сумму только если все три поля указаны
-  if (data.proteinsPer100 !== undefined && data.fatsPer100 !== undefined && data.carbsPer100 !== undefined) {
-    const sum = data.proteinsPer100 + data.fatsPer100 + data.carbsPer100;
-    return sum <= 100;
-  }
-  return true;
-}, {
-  message: "Сумма белков, жиров и углеводов на 100 грамм не может превышать 100 грамм",
-  path: ["proteinsPer100"],
-});
+export const ProductUpdateSchema = ProductBaseSchema.partial();
 
 export type ProductCreateInput = z.infer<typeof ProductCreateSchema>;
 export type ProductUpdateInput = z.infer<typeof ProductUpdateSchema>;

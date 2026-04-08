@@ -184,8 +184,6 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
     if (items.length < 1) return false;
     const macro = derived.macroCategoryRu;
     if (!categoryTouched && !macro) return false;
-    const sum = proteins + fats + carbs;
-    if (sum > 100) return false;
     return true;
   })();
 
@@ -250,7 +248,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         >
           <div style={{ gridColumn: "span 12" }}>
           <label style={{ marginLeft: '8px' }}>Название (можно использовать макросы: !десерт, !первое, ...)</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
           {derived.macroCategoryRu && (
             <div style={{ marginTop: 6, color: "#333", fontSize: 12 }}>
               Найден макрос: категория автоматически {derived.macroCategoryRu} (сервер удалит макрос из названия)
@@ -495,12 +493,6 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
           />
         </div>
 
-        {proteins + fats + carbs > 100 && (
-          <div style={{ gridColumn: "span 12", color: "crimson", fontSize: 14 }}>
-            Сумма БЖУ не может превышать 100г на 100г продукта
-          </div>
-        )}
-
         <div style={{ gridColumn: "span 12", display: "flex", gap: 14 }}>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <input type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} disabled={!allowedFlags.vegan} />
@@ -517,7 +509,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         </div>
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 12, marginTop: 8 }}>
-          <button className="btn btn-primary" type="submit" disabled={!isValid}>
+          <button className="btn btn-primary" type="submit">
             {mode === "create" ? "Создать" : "Сохранить"}
           </button>
           <button
