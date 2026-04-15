@@ -248,7 +248,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         >
           <div style={{ gridColumn: "span 12" }}>
           <label style={{ marginLeft: '8px' }}>Название (можно использовать макросы: !десерт, !первое, ...)</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+          <input data-testid="dish-name" type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
           {derived.macroCategoryRu && (
             <div style={{ marginTop: 6, color: "#333", fontSize: 12 }}>
               Найден макрос: категория автоматически {derived.macroCategoryRu} (сервер удалит макрос из названия)
@@ -258,12 +258,13 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
 
         <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Размер порции (г)</label>
-          <input type="number" min={0} step="0.01" value={size} onChange={(e) => setSize(Number(e.target.value))} style={{ width: "100%" }} />
+          <input data-testid="dish-size" type="number" min={0} step="0.01" value={size} onChange={(e) => setSize(Number(e.target.value))} style={{ width: "100%" }} />
         </div>
 
         <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Категория</label>
           <select
+            data-testid="dish-category"
             value={effectiveCategoryForSelect}
             onChange={(e) => {
               const v = e.target.value;
@@ -324,6 +325,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
           <div>
             <label style={{ marginLeft: '8px' }}>Загрузить фото ({photos.length}/5)</label>
             <input
+              data-testid="dish-photo-upload"
               type="file"
               accept="image/*"
               multiple
@@ -367,7 +369,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
             <div>
               <label style={{ marginLeft: '8px' }}>Продукт</label>
-              <select value={productIdToAdd} onChange={(e) => setProductIdToAdd(Number(e.target.value))}>
+              <select data-testid="dish-product-select" value={productIdToAdd} onChange={(e) => setProductIdToAdd(Number(e.target.value))}>
                 {products.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
@@ -378,6 +380,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
             <div>
               <label style={{ marginLeft: '8px' }}>Количество (г)</label>
               <input
+                data-testid="dish-quantity-input"
                 type="number"
                 min={0}
                 step="0.01"
@@ -386,6 +389,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
               />
             </div>
             <button
+              data-testid="dish-add-product"
               className="btn btn-secondary"
               type="button"
               onClick={() => {
@@ -418,10 +422,11 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
               </thead>
               <tbody>
                 {items.map((it, idx) => (
-                  <tr key={it.productId}>
+                  <tr key={it.productId} data-testid={`dish-composition-row-${idx}`}>
                     <td style={{ padding: "8px 0" }}>{productById.get(it.productId)?.name ?? it.productId}</td>
                     <td>
                       <input
+                        data-testid={`dish-composition-quantity-${idx}`}
                         type="number"
                         min={0}
                         step="0.01"
@@ -434,6 +439,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
                     </td>
                     <td>
                       <button
+                        data-testid={`dish-composition-remove-${idx}`}
                         className="btn btn-danger btn-sm"
                         type="button"
                         onClick={() => setItems((prev) => prev.filter((x) => x.productId !== it.productId))}
@@ -451,6 +457,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         <div style={{ gridColumn: "span 3" }}>
           <label>Ккал/порция</label>
           <input
+            data-testid="dish-calories"
             type="number"
             min={0}
             step="0.01"
@@ -462,6 +469,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         <div style={{ gridColumn: "span 3" }}>
           <label>Б (г)</label>
           <input
+            data-testid="dish-proteins"
             type="number"
             min={0}
             step="0.01"
@@ -473,6 +481,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         <div style={{ gridColumn: "span 3" }}>
           <label>Ж (г)</label>
           <input
+            data-testid="dish-fats"
             type="number"
             min={0}
             step="0.01"
@@ -484,6 +493,7 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
         <div style={{ gridColumn: "span 3" }}>
           <label>У (г)</label>
           <input
+            data-testid="dish-carbs"
             type="number"
             min={0}
             step="0.01"
@@ -495,24 +505,25 @@ export function DishEditPage({ mode }: { mode: "create" | "edit" }) {
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 14 }}>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} disabled={!allowedFlags.vegan} />
+            <input data-testid="dish-vegan" type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} disabled={!allowedFlags.vegan} />
             Веган
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={glutenFree} onChange={(e) => setGlutenFree(e.target.checked)} disabled={!allowedFlags.glutenFree} />
+            <input data-testid="dish-gluten-free" type="checkbox" checked={glutenFree} onChange={(e) => setGlutenFree(e.target.checked)} disabled={!allowedFlags.glutenFree} />
             Без глютена
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={sugarFree} onChange={(e) => setSugarFree(e.target.checked)} disabled={!allowedFlags.sugarFree} />
+            <input data-testid="dish-sugar-free" type="checkbox" checked={sugarFree} onChange={(e) => setSugarFree(e.target.checked)} disabled={!allowedFlags.sugarFree} />
             Без сахара
           </label>
         </div>
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 12, marginTop: 8 }}>
-          <button className="btn btn-primary" type="submit">
+          <button data-testid="dish-submit" className="btn btn-primary" type="submit">
             {mode === "create" ? "Создать" : "Сохранить"}
           </button>
           <button
+            data-testid="dish-cancel"
             className="btn btn-secondary"
             type="button"
             onClick={() => navigate(mode === "edit" ? `/dishes/${dishId}` : "/dishes")}

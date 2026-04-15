@@ -13,7 +13,7 @@ export type TestData = {
   };
 };
 
-interface ProductData {
+export interface ProductData {
   name: string;
   category: string;
   cookingNeed: string;
@@ -26,7 +26,7 @@ interface ProductData {
   sugarFree?: boolean;
 }
 
-interface DishData {
+export interface DishData {
   name: string;
   category: string;
   calories?: number;

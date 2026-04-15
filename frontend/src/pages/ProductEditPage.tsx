@@ -115,12 +115,12 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
         >
           <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Название</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
+          <input data-testid="product-name" type="text" value={name} onChange={(e) => setName(e.target.value)} style={{ width: "100%" }} />
           </div>
 
         <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Категория</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%" }}>
+          <select data-testid="product-category" value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%" }}>
             {PRODUCT_CATEGORIES.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -131,7 +131,7 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
 
         <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Необходимость готовки</label>
-          <select value={cookingNeed} onChange={(e) => setCookingNeed(e.target.value)} style={{ width: "100%" }}>
+          <select data-testid="product-cooking-need" value={cookingNeed} onChange={(e) => setCookingNeed(e.target.value)} style={{ width: "100%" }}>
             {COOKING_NEEDS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -142,24 +142,24 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
 
         <div style={{ gridColumn: "span 6" }}>
           <label style={{ marginLeft: '8px' }}>Состав (описание)</label>
-          <textarea value={composition} onChange={(e) => setComposition(e.target.value)} style={{ width: "100%", minHeight: 80 }} />
+          <textarea data-testid="product-composition" value={composition} onChange={(e) => setComposition(e.target.value)} style={{ width: "100%", minHeight: 80 }} />
         </div>
 
         <div style={{ gridColumn: "span 3" }}>
           <label style={{ marginLeft: '8px' }}>Ккал/100г</label>
-          <input type="number" min={0} step="0.01" value={caloriesPer100} onChange={(e) => setCaloriesPer100(Number(e.target.value))} style={{ width: "100%" }} />
+          <input data-testid="product-calories" type="number" min={0} step="0.01" value={caloriesPer100} onChange={(e) => setCaloriesPer100(Number(e.target.value))} style={{ width: "100%" }} />
         </div>
         <div style={{ gridColumn: "span 3" }}>
           <label style={{ marginLeft: '8px' }}>Белки г/100г</label>
-          <input type="number" min={0} step="0.01" value={proteinsPer100} onChange={(e) => setProteinsPer100(Number(e.target.value))} style={{ width: "100%" }} />
+          <input data-testid="product-proteins" type="number" min={0} step="0.01" value={proteinsPer100} onChange={(e) => setProteinsPer100(Number(e.target.value))} style={{ width: "100%" }} />
         </div>
         <div style={{ gridColumn: "span 3" }}>
           <label style={{ marginLeft: '8px' }}>Жиры г/100г</label>
-          <input type="number" min={0} step="0.01" value={fatsPer100} onChange={(e) => setFatsPer100(Number(e.target.value))} style={{ width: "100%" }} />
+          <input data-testid="product-fats" type="number" min={0} step="0.01" value={fatsPer100} onChange={(e) => setFatsPer100(Number(e.target.value))} style={{ width: "100%" }} />
         </div>
         <div style={{ gridColumn: "span 3" }}>
           <label style={{ marginLeft: '8px' }}>Углеводы г/100г</label>
-          <input type="number" min={0} step="0.01" value={carbsPer100} onChange={(e) => setCarbsPer100(Number(e.target.value))} style={{ width: "100%" }} />
+          <input data-testid="product-carbs" type="number" min={0} step="0.01" value={carbsPer100} onChange={(e) => setCarbsPer100(Number(e.target.value))} style={{ width: "100%" }} />
         </div>
 
         <div style={{ gridColumn: "span 12" }}>
@@ -237,24 +237,25 @@ export function ProductEditPage({ mode }: { mode: "create" | "edit" }) {
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 14 }}>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} />
+            <input data-testid="product-vegan" type="checkbox" checked={vegan} onChange={(e) => setVegan(e.target.checked)} />
             Веган
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={glutenFree} onChange={(e) => setGlutenFree(e.target.checked)} />
+            <input data-testid="product-gluten-free" type="checkbox" checked={glutenFree} onChange={(e) => setGlutenFree(e.target.checked)} />
             Без глютена
           </label>
           <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" checked={sugarFree} onChange={(e) => setSugarFree(e.target.checked)} />
+            <input data-testid="product-sugar-free" type="checkbox" checked={sugarFree} onChange={(e) => setSugarFree(e.target.checked)} />
             Без сахара
           </label>
         </div>
 
         <div style={{ gridColumn: "span 12", display: "flex", gap: 12, marginTop: 8 }}>
-          <button className="btn btn-primary" type="submit">
+          <button data-testid="product-submit" className="btn btn-primary" type="submit">
             {mode === "create" ? "Создать" : "Сохранить"}
           </button>
           <button
+            data-testid="product-cancel"
             className="btn btn-secondary"
             type="button"
             onClick={() => navigate(mode === "edit" ? `/products/${productId}` : "/products")}
